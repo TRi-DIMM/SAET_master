@@ -1883,6 +1883,8 @@ def processSentinel2SceneFromPath(scene_path, title, sds_path, shp_path, wi_type
         aweishS2(scene_path)
     if wi_type == 'mndwi':
         mndwiS2(scene_path)
+    if wi_type == 'ndwi':
+        ndwiS2(scene_path)
     if wi_type == 'kmeans':
         computeKmeansS2(scene_path)
     #print('Computing cloud mask...')
@@ -2197,6 +2199,64 @@ def mndwiS2(scene_path):
     saveIndex(mndwi, outFileName, base_path)
 
 
+def ndwiS2(scene_path):
+    '''
+    Description:
+    ------------
+    Computes S2 ndwi water index for the analysis area. Involved bands: B03(green),
+    B8(nir).
+    Downscales some bands if it is needed to homogenize spatial resolutions
+
+    Arguments:
+    ------------
+    - scene_path (string): path to the scene folder
+
+    Returns:
+    ------------
+    None
+
+    '''
+
+    # create output folder if it is needed
+    output_folder = str(pathlib.Path(os.path.join(scene_path, 'temp')))
+    createFolderCheck(output_folder)
+
+    # prevents numpy errors for invalid values or divide by zero
+    np.seterr(divide='ignore', invalid='ignore')
+
+    # output file name setting
+    path = pathlib.PurePath(scene_path)
+    name = path.name+'_wi.tif'
+    outFileName = str(pathlib.Path(os.path.join(output_folder, name)))
+
+    # template image to copy resolution, bounding box and coordinate reference system
+    base_path = getBandPath(scene_path, 'B11')
+
+    # getting bands data and downscaling if it is needed
+    band_green = gdal.Open(getBandPath(scene_path, 'B03'))
+    pix_size = band_green.GetGeoTransform()[1]
+    if pix_size == 10.0:
+        data_green = downScaling(getBandPath(
+            scene_path, 'B03')).astype(np.float32)
+    else:
+        data_green = band_green.GetRasterBand(
+            1).ReadAsArray().astype(np.float32)
+
+    band_nir = gdal.Open(getBandPath(scene_path, 'B08'))
+    pix_size = band_nir.GetGeoTransform()[1]
+    if pix_size == 10.0:
+        data_nir = downScaling(getBandPath(
+            scene_path, 'B08')).astype(np.float32)
+    else:
+        data_nir = band_nir.GetRasterBand(1).ReadAsArray().astype(np.float32)
+
+    # computing water index
+    ndwi = (data_green - data_nir) / (data_green + data_nir)
+
+    # saving water index
+    saveIndex(ndwi, outFileName, base_path)
+
+
 def computeKmeansS2(scene_path):
     '''
     Description:
@@ -2411,6 +2471,8 @@ def processLandsatSceneFromPath(scene_path, scene_id, sds_path, shp_path, wi_typ
         aweishLandsat(scene_path)
     if wi_type == 'mndwi':
         mndwiLandsat(scene_path)
+    if wi_type == 'ndwi':
+        ndwiLandsat(scene_path)
     if wi_type == 'kmeans':
         computeKmeansLandsat(scene_path)
     # print('Computing cloud mask...')
@@ -2595,6 +2657,59 @@ def mndwiLandsat(scene_path):
 
     # saving water index
     saveIndex(mndwi, outFileName, base_path)
+
+
+def ndwiLandsat(scene_path):
+    '''
+    Description:
+    ------------
+    Computes L8 ndwi water index for the analysis area. Involved bands: B3(green)
+    B5(nir)
+
+    Arguments:
+    ------------
+    - scene_path (string): path to the scene folder
+
+    Returns:
+    ------------
+    None
+
+    '''
+    # create output folder if it is needed
+    output_folder = str(pathlib.Path(os.path.join(scene_path, 'temp')))
+    createFolderCheck(output_folder)
+
+    # prevents numpy errors for invalid values or divide by zero
+    np.seterr(divide='ignore', invalid='ignore')
+
+    # output file name setting
+    path = pathlib.PurePath(scene_path)
+    name = path.name+'_wi.tif'
+    outFileName = str(pathlib.Path(os.path.join(output_folder, name)))
+
+    # template image to copy resolution, bounding box and coordinate reference system
+    base_path = getBandPath(scene_path, 'B5')
+
+    # getting bands data
+    band_green = gdal.Open(getBandPath(scene_path, 'B3'))
+    data_green = band_green.GetRasterBand(1).ReadAsArray().astype(np.float32)
+
+    band_nir = gdal.Open(getBandPath(scene_path, 'B5'))
+    data_nir = band_nir.GetRasterBand(1).ReadAsArray().astype(np.float32)
+
+    # getting parameters to convert Dns to TOA values from MTL file
+    rmb, rab, se = getTOAParameters(getBandPath(scene_path, 'MTL.txt'), '1')
+
+    # DNs to TOA conversion
+    se_factor = sin(se*(np.pi/180.0))
+    dg_toa = (data_green*rmb+rab) / se_factor
+    dnir_toa = (data_nir*rmb+rab) / se_factor
+
+    # computing water index
+    ndwi = (dg_toa - dnir_toa) / (dg_toa + dnir_toa)
+
+    # saving water index
+    saveIndex(ndwi, outFileName, base_path)
 
 
 def getTOAParameters(mtl, band):

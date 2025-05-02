@@ -45,7 +45,18 @@ def valid_date(s):
 def parse_args_searching():
     '''
     Function to validate the input parameters. These parameters are obtained from the command-line
-    sentence. 
+    sentence.
+
+    Datasets:
+    landsat_tm_c2_l1 -> Landsat 5 TM Collection 2 Level 1 // TO DO
+    landsat_etm_c2_l1 -> Landsat 7 ETM+ Collection 2 Level 1 // TO DO
+    landsat_ot_c2_l1 -> Landsat 8/9 Collection 2 Level 1 
+    landsat_tm_c2_l2 -> Landsat 5 TM Collection 2 Level 2 // TO DO
+    landsat_etm_c2_l2 -> Landsat 7 ETM+ Collection 2 Level 2 // TO DO
+    landsat_ot_c2_l2 -> Landsat 8/9 Collection 2 Level 2
+    S2MSI1C -> Sentinel-2 level 1C (TOA)
+    S2MSI2A -> Sentinel-2 level 2A (BOA)
+
     '''
     parser = argparse.ArgumentParser()
     parser.add_argument('--fp',
@@ -79,12 +90,12 @@ def parse_args_searching():
                         type=str,
                         choices=['landsat_ot_c2_l1',
                                  'landsat_ot_c2_l2', 'NONE'],
-                        help='Landsat 8 product type. landsat_ot_c2_l1 or landsat_ot_c2_l2 or NONE. Default: landsat_ot_c2_l1',
+                        help='Landsat 8/9 product type. landsat_ot_c2_l1 or landsat_ot_c2_l2 or NONE. Default: landsat_ot_c2_l1',
                         default='landsat_ot_c2_l1',
                         required=True)
     parser.add_argument('--ll',
                         type=str,
-                        help='List of scenes for Landsat 8 (number of 6 digits). --ll=198032,199031. Default: NONE',
+                        help='List of scenes for Landsat 8/9 (number of 6 digits). --ll=198032,199031. Default: NONE',
                         default='NONE',
                         required=True)
     parser.add_argument('--sp',
@@ -142,8 +153,9 @@ def parse_args_processing():
     parser = argparse.ArgumentParser()
     parser.add_argument('--wi',
                         type=str,
-                        choices=['aweish', 'aweinsh', 'mndwi', 'kmeans'],
-                        help='Water index type (aweish, aweinsh,mndwi,kmeans). --wi=aweinsh. Default: aweinsh',
+                        choices=['aweish', 'aweinsh',
+                                 'mndwi', 'ndwi', 'kmeans'],
+                        help='Water index type (aweish, aweinsh, mndwi, ndwi, kmeans). --wi=aweinsh. Default: aweinsh',
                         default='aweinsh',
                         required=False)
     parser.add_argument('--th',
