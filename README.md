@@ -14,6 +14,7 @@ SHORELINE ANALYSIS AND EXTRACTION TOOL.
 6. [OUTPUTS](#id6)
 7. [CONSIDERATIONS](#id7)
 8. [INSTALLATION](#id8)
+9. [LIST OF IMPROVEMENTS](#id9)
 
 ## 1. INTRODUCTION<a name="id1"> </a><small>[(index)](#id0)</small>
 
@@ -377,3 +378,13 @@ pip install ./gdal_python_wheels/GDAL-3.3.3-cp39-cp39-win_amd64.whl
 8. Install the libraries typing 'pip3 install -r requirements_linux.txt'
 9. Change your credentials in the file “sp_config.py”
 10. Type 'python3 sp_searching_run.py --h'
+
+## 9. LIST OF IMPROVEMENTS<a name="id9"> </a><small>[(index)](#id0)</small>
+
+Any improvements or modifications that are made will appear in this list:
+
+| Modification                              | Explanation                                                                                                                                  | Date       |
+|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| NDWI water index added                    | A new water index (NDWI) have beeen added.                                                                                                   | April 2025 |
+| S2 tiles filtered by  level of processing | In the searching process, if two or more S2 images have the same date,  only the one with the highest level of processing will be selected.  | April 2025 |
+|                                           |                                                                                                                                              |            |
