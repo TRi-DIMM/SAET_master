@@ -7,10 +7,10 @@ from pathlib import Path
 # from other scripts without modify the configuration file
 
 # CREDENTIALS FOR IMAGERY SERVERS (You must set your own credentials.) ################
-os.environ['USER_ESA'] = os.getenv('USER_ESA', '********')
-os.environ['PASS_ESA'] = os.getenv('PASS_ESA', '********')
-os.environ['USER_USGS'] = os.getenv('USER_USGS', '********')
-os.environ['PASS_USGS'] = os.getenv('PASS_USGS', '********')
+os.environ['USER_ESA'] = os.getenv('USER_ESA', 'diemptm@hcmunre.edu.vn')
+os.environ['PASS_ESA'] = os.getenv('PASS_ESA', 'P@ssword2024!')
+os.environ['USER_USGS'] = os.getenv('USER_USGS', 'mydiem94')
+os.environ['PASS_USGS'] = os.getenv('PASS_USGS', 'eSQjaO0@owfiIwpTKlj@OairJ__PRnrsr9AoHeY_tFpNfnOyX5VSq_Qz7m4cSnpY')
 
 # HOME FOLDER #########################################################################
 os.environ["SAET_HOME_PATH"] = str(
